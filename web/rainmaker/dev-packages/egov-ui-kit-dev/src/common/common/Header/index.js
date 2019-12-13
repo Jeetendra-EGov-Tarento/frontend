@@ -25,8 +25,12 @@ class Header extends Component {
   };
 
   componentDidMount = () => {
-    const { role, updateActiveRoute, userInfo } = this.props;
+    const { role, updateActiveRoute, userInfo,cities } = this.props;
     const tenantId = role.toLowerCase() === "citizen" ? userInfo.permanentCity : getTenantId();
+    const ulbLogo = cities.filter(item => item.code === tenantId).logoId ;
+    if(!ulbLogo){
+      ulbLogo = "https://s3.ap-south-1.amazonaws.com/pb-egov-assets/pb.amritsar/logo.png"
+    }
 
     if (role && role.toLowerCase() !== "citizen") {
       // const menupath = localStorageGet("menuPath");
