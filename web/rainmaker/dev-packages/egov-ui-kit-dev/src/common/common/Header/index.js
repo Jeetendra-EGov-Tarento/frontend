@@ -22,37 +22,48 @@ class Header extends Component {
     right: false,
     left: false,
     ulbLogo: "",
+    cityObj : {}
   };
 
   componentDidMount = () => {
     const { role, updateActiveRoute, userInfo,cities } = this.props;
     const tenantId = role.toLowerCase() === "citizen" ? userInfo.permanentCity : getTenantId();
-    const ulbLogo = cities.filter(item => item.code === tenantId).logoId ;
-    if(!ulbLogo){
-      ulbLogo = "https://s3.ap-south-1.amazonaws.com/pb-egov-assets/pb.amritsar/logo.png"
-    }
+    const cityObj = cities.filter(item =>{ 
+      if(item.code===tenantId){
+        return item;
+      }else{
+        return item.code === "pb"
+      }
 
-    if (role && role.toLowerCase() !== "citizen") {
-      // const menupath = localStorageGet("menuPath");
-      const ulbLogo = `https://s3.ap-south-1.amazonaws.com/pb-egov-assets/${tenantId}/logo.png`;
-      // updateActiveRoute(menupath);
-      this.setState({ ulbLogo });
-    }
-    if (tenantId) {
-      const ulbLogo = `https://s3.ap-south-1.amazonaws.com/pb-egov-assets/${tenantId}/logo.png`;
-      this.setState({ ulbLogo });
-    }
+    }) ;
+    const ulbLogo = get(cityObj,"logoId");
+    this.setState({ cityObj , ulbLogo });
+    // if(!ulbLogo){
+    //   ulbLogo = "https://s3.ap-south-1.amazonaws.com/pb-egov-assets/pb.amritsar/logo.png"
+    // }
+
+    // if (role && role.toLowerCase() !== "citizen") {
+    //   // const menupath = localStorageGet("menuPath");
+    //   const ulbLogo = `https://s3.ap-south-1.amazonaws.com/pb-egov-assets/${tenantId}/logo.png`;
+    //   // updateActiveRoute(menupath);
+    //   this.setState({ ulbLogo });
+    // }
+    // if (tenantId) {
+    //   const ulbLogo = `https://s3.ap-south-1.amazonaws.com/pb-egov-assets/${tenantId}/logo.png`;
+    //   this.setState({ ulbLogo });
+    // }
     const menupath = localStorageGet("menuPath");
     const menuName = localStorageGet("menuName");
     updateActiveRoute(menupath, menuName);
   };
 
   componentWillReceiveProps = (nextProps) => {
-    const { role, userInfo } = this.props;
-    const permanentCity = get(nextProps, "userInfo.permanentCity");
+    const { userInfo } = this.props;
+    const {cityObj} = this.state
     if (get(userInfo ,"permanentCity") !== get(nextProps, "userInfo.permanentCity")) {
-      const tenantId = role.toLowerCase() === "citizen" ? permanentCity : getTenantId();
-      const ulbLogo = `https://s3.ap-south-1.amazonaws.com/pb-egov-assets/${tenantId}/logo.png`;
+      const ulbLogo = get(cityObj,"logoId");
+      // const tenantId = role.toLowerCase() === "citizen" ? permanentCity : getTenantId();
+      // const ulbLogo = `https://s3.ap-south-1.amazonaws.com/pb-egov-assets/${tenantId}/logo.png`;
       this.setState({ ulbLogo });
     }
    
